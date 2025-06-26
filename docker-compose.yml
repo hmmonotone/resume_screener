@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - UPLOAD_DIR=/app/data/resumes
+      - INDEX_DIR=/app/data/index
+    volumes:
+      - ./api:/app
+      - ./pipeline:/app/pipeline
+      - ./data:/app/data
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+
+  mongo:
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - "5432:5432"
